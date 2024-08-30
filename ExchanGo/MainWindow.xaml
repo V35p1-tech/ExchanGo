@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ExchanGo"
         mc:Ignorable="d"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         Title="ExchanGO" Height="450" Width="800" MinHeight="300" MinWidth="500" WindowStartupLocation="CenterScreen">
     <TabControl x:Name="tbMain" TabStripPlacement="Top">
         <TabItem x:Name="tbConverter" Header="Currency Converter">
@@ -26,7 +27,59 @@
                 </Grid.RowDefinitions>
                 <TextBlock Grid.ColumnSpan="3" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Text="ExchanGo" FontSize="32" FontWeight="Bold" FontFamily="Calibri" Foreground="#1C1F4A"/>
 
-                <Border Grid.ColumnSpan="5" Grid.RowSpan="2" Grid.Row="2" Grid.Column="1" BorderThickness="10" CornerRadius="15">
+                <Border Grid.ColumnSpan="3" Grid.RowSpan="2" Grid.Row="2" Grid.Column="1" BorderThickness="10" CornerRadius="15">
+                    <Border.BorderBrush>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#1C1F4A" Offset="0.00"/>
+                            <GradientStop Color="#20C3AF" Offset="0.70"/>
+                        </LinearGradientBrush>
+                    </Border.BorderBrush>
+                    <Rectangle>
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#1C1F4A" Offset="0.00"/>
+                                <GradientStop Color="#20C3AF" Offset="0.70"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </Border>
+                
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="Write a value: " Margin="0 30 0 0" VerticalAlignment="Top" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
+                <TextBox x:Name="Currency_TextInput" Grid.Row="2" Grid.Column="1" Width="120" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Row="2" Grid.Column="2" Text="Choose converted currency: " Margin="0 30 0 0" VerticalAlignment="Top" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
+                <ComboBox x:Name="Currency_ConvertFrom" Grid.Row="2" Grid.Column="2" Width="120" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Row="2" Grid.Column="3" Text="Choose currency to convert: " Margin="0 30 0 0" VerticalAlignment="Top" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
+                <ComboBox x:Name="Currency_ConvertTo" Grid.Row="2" Grid.Column="3" Width="120" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBox x:Name="ConvertedCurrency" BorderThickness="0" Background="Transparent" Grid.ColumnSpan="3" Grid.Row="3" Grid.Column="1" Width="100" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Text="Converted currency: " Margin="0 10 0 0" VerticalAlignment="Top" HorizontalAlignment="Center" Foreground="White" FontSize="25"/>
+
+                <Button x:Name="Btn_Convert" Grid.Row="4" Grid.Column="1" Content="Convert"  Width="100" Height="40" Foreground="White" FontSize="20" BorderThickness="0" Background="#1F8FAF"/>
+                <Button x:Name="Btn_Clear" Grid.Row="4" Grid.Column="3" Content="Clear" BorderThickness="0"  Width="100" Height="40" Foreground="White" FontSize="20" Background="#1F8FAF" />
+
+
+                <TextBlock Margin="2" HorizontalAlignment="Right" VerticalAlignment ="Bottom" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="5" Text="widawski.dawid@yahoo.com"/>
+            </Grid>
+        </TabItem>
+        <TabItem x:Name="tbCharts" Header="Charts">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="30"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="20"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.ColumnSpan="3" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Text="ExchanGo - Charts" FontSize="32" FontWeight="Bold" FontFamily="Calibri" Foreground="#1C1F4A"/>
+
+                <Border Grid.ColumnSpan="3" Grid.RowSpan="2" Grid.Row="2" Grid.Column="1" BorderThickness="10" CornerRadius="15">
                     <Border.BorderBrush>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                             <GradientStop Color="#1C1F4A" Offset="0.00"/>
@@ -43,20 +96,19 @@
                     </Rectangle>
                 </Border>
 
-                <TextBox x:Name="Currency_TextInput" Grid.Row="2" Grid.Column="1" Width="100" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <ComboBox x:Name="Currency_ConvertFrom" Grid.Row="2" Grid.Column="2" Width="100" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <ComboBox x:Name="Currency_ConvertTo" Grid.Row="2" Grid.Column="3" Width="100" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBox x:Name="ConvertedCurrency" BorderThickness="0" Background="Transparent" Grid.ColumnSpan="3" Grid.Row="3" Grid.Column="1" Width="100" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <lvc:CartesianChart Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="15">
+                    <lvc:CartesianChart.Series>
+                        <lvc:LineSeries Title="Series 1" Values="{Binding LineSeriesValues}" />
+                    </lvc:CartesianChart.Series>
+                </lvc:CartesianChart>
 
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="Currency for chart" VerticalAlignment="top" HorizontalAlignment="Center" Foreground="#1C1F4A"/>
+                <ComboBox x:Name="Chart_CurrencyChosed" Grid.Row="4" Grid.Column="1" Width="150" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-                <Button x:Name="Btn_Convert" Grid.Row="4" Grid.Column="1" Content="Convert"  Width="100" Height="40" Foreground="White" FontSize="20" BorderThickness="0" Background="#1F8FAF"/>
-                <Button x:Name="Btn_Clear" Grid.Row="4" Grid.Column="3" Content="Clear" BorderThickness="0"  Width="100" Height="40" Foreground="White" FontSize="20" Background="#1F8FAF" />
-
-
-                <TextBlock Margin="2" HorizontalAlignment="Right" VerticalAlignment ="Bottom" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="5" Text="widawski.dawid@yahoo.com"/>
+                <TextBlock x:Name="Chart_Text_Currency" Margin="2" HorizontalAlignment="Right" VerticalAlignment ="Bottom" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="5" Text="widawski.dawid@yahoo.com"/>
             </Grid>
         </TabItem>
-        <TabItem x:Name="Settings" Header="Settings">
+        <TabItem x:Name="tbSettings" Header="Settings">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30"/>
@@ -68,12 +120,13 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="10"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="2*"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="20"/>
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="ExchanGo - Settings" FontSize="32" FontWeight="Bold" FontFamily="Calibri" Foreground="#1C1F4A"/>
-                <Border Grid.ColumnSpan="3" Grid.Row="2" Grid.Column="1" BorderThickness="10" CornerRadius="15">
+                <Border Grid.ColumnSpan="3" Grid.RowSpan="2" Grid.Row="2" Grid.Column="1" BorderThickness="10" CornerRadius="15">
                     <Border.BorderBrush>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                             <GradientStop Color="#1C1F4A" Offset="0.00"/>
@@ -89,68 +142,14 @@
                         </Rectangle.Fill>
                     </Rectangle>
                 </Border>
-                <TextBlock Margin="2" HorizontalAlignment="Right" VerticalAlignment ="Bottom" Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" Text="widawski.dawid@yahoo.com"/>
+                <TextBlock x:Name="Settings_Language_Text" Grid.Row="2" Grid.Column="2" Text="Language" VerticalAlignment="center" HorizontalAlignment="left" Foreground="White" FontSize="20"/>
+                <ComboBox x:Name="Settings_Language_ComboBox" Grid.Row="2" Grid.Column="2" Width="110" Height="40" VerticalAlignment="Center" HorizontalAlignment="left" Margin="110 0 0 0"/>
+                <TextBlock x:Name="Settings_Theme_Text" Grid.Row="3" Grid.Column="2" Text="Theme" VerticalAlignment="center" HorizontalAlignment="left" Foreground="White"  FontSize="20"/>
+                <ComboBox x:Name="Settings_Color_ComboBox" Grid.Row="3" Grid.Column="2" Width="110" Height="40" VerticalAlignment="Center" HorizontalAlignment="left" Margin="110 0 0 0"/>                
+                
+                <TextBlock Margin="2" HorizontalAlignment="Right" VerticalAlignment ="Bottom" Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="5" Text="widawski.dawid@yahoo.com"/>
             </Grid>
         </TabItem>
     </TabControl>
-    <!--
-    <Grid x:Name="ScreenBackground">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="8*"/>
-            <ColumnDefinition Width="*"/>           
-            <ColumnDefinition Width="30"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="4*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="20"/>
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="ExchanGo" FontSize="32" FontWeight="Bold" FontFamily="Calibri" Foreground="#1C1F4A"/>
-        <TabControl Grid.Row="2" Grid.Column="2" x:Name="tbMain" TabStripPlacement="Top">
-            <TabItem x:Name="tbConverter" Header="Currency Converter">
-                <Border Grid.ColumnSpan="3" Grid.Row="2" Grid.Column="1" BorderThickness="10" CornerRadius="15">
-                <Border.BorderBrush>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#1C1F4A" Offset="0.00"/>
-                        <GradientStop Color="#20C3AF" Offset="0.70"/>
-                    </LinearGradientBrush>
-                </Border.BorderBrush>
-                    <Rectangle>
-                        <Rectangle.Fill>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#1C1F4A" Offset="0.00"/>
-                                <GradientStop Color="#20C3AF" Offset="0.70"/>
-                            </LinearGradientBrush>
-                        </Rectangle.Fill>
-                    </Rectangle>
-                </Border>
-
-            </TabItem>
-            <TabItem x:Name="tbSettings" Header="Settings">
-                <Border Grid.ColumnSpan="3" Grid.Row="2" Grid.Column="1" BorderThickness="10" CornerRadius="15">
-                    <Border.BorderBrush>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#1C1F4A" Offset="0.00"/>
-                            <GradientStop Color="#20C3AF" Offset="0.70"/>
-                        </LinearGradientBrush>
-                    </Border.BorderBrush>
-                    <Rectangle>
-                        <Rectangle.Fill>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#1C1F4A" Offset="0.00"/>
-                                <GradientStop Color="#20C3AF" Offset="0.70"/>
-                            </LinearGradientBrush>
-                        </Rectangle.Fill>
-                    </Rectangle>
-                </Border>
-            </TabItem>
-        </TabControl>
-        <TextBlock Margin="2" HorizontalAlignment="Right" VerticalAlignment ="Center" Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" Text="widawski.dawid@yahoo.com"/>
-
-    </Grid>
-    -->
+   
 </Window>

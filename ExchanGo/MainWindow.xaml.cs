@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Configuration;
+using LiveCharts;
+using LiveCharts.Wpf;
 
 namespace ExchanGo
 {
@@ -24,6 +26,12 @@ namespace ExchanGo
         public MainWindow()
         {
             InitializeComponent();
+
+            // Initialize chart data
+          //  LineSeriesValues = new ChartValues<double> { 3, 5, 7, 4 };
+
+            // Set the DataContext for binding
+            DataContext = this;
         }
     }
 }
