@@ -28,8 +28,7 @@ namespace ExchanGo
             InitializeComponent();
 
             // Initialize chart data
-          //  LineSeriesValues = new ChartValues<double> { 3, 5, 7, 4 };
-
+            Chart_LineSeries.Values = new ChartValues<double> { 3, 5, 7, 4 ,1 ,0 ,2 ,5 ,6 ,3 ,2 ,1 ,2 ,5 ,5 ,9 ,6};
             // Set the DataContext for binding
             DataContext = this;
         }

@@ -98,7 +98,7 @@
 
                 <lvc:CartesianChart Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="15">
                     <lvc:CartesianChart.Series>
-                        <lvc:LineSeries Title="Series 1" Values="{Binding LineSeriesValues}" />
+                        <lvc:LineSeries x:Name="Chart_LineSeries" Title="Series 1" Values="{Binding LineSeriesValues}" />
                     </lvc:CartesianChart.Series>
                 </lvc:CartesianChart>
 
