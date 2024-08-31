@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Configuration;
 using LiveCharts;
 using LiveCharts.Wpf;
+using System.Xml.Linq;
 
 namespace ExchanGo
 {
@@ -26,11 +27,39 @@ namespace ExchanGo
         public MainWindow()
         {
             InitializeComponent();
+            GetAsyncData();
 
             // Initialize chart data
             Chart_LineSeries.Values = new ChartValues<double> { 3, 5, 7, 4 ,1 ,0 ,2 ,5 ,6 ,3 ,2 ,1 ,2 ,5 ,5 ,9 ,6};
             // Set the DataContext for binding
             DataContext = this;
+
+        }
+
+        public async void GetAsyncData()
+        {
+            CurrencyDataGater GetActualCurrency = new CurrencyDataGater();
+            CurrencyDataGater GetHistoricallCurrency = new CurrencyDataGater();
+            try
+            {
+                GlobalSettings.DailyCurrencyDoc = await GetActualCurrency.GetDataFromHttp(GlobalSettings.HttpCurrencyExchangeDaily);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+            try
+            {
+                GlobalSettings.HistoricalCurrencyDoc = await GetActualCurrency.GetDataFromHttp(GlobalSettings.HttpsCurrencyExchangeHistoric); 
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            GetActualCurrency.UpdateDataBase(GlobalSettings.DailyCurrencyDoc,GlobalSettings.ConnectionString);
+           // GetActualCurrency.SaveToFile(GlobalSettings.DailyCurrencyDoc, "DailyCur.xml");
+
         }
     }
 }

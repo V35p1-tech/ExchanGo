@@ -45,19 +45,18 @@
                 </Border>
                 
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="Write a value: " Margin="0 30 0 0" VerticalAlignment="Top" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
-                <TextBox x:Name="Currency_TextInput" Grid.Row="2" Grid.Column="1" Width="120" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBox x:Name="Converter_txtInputCurrency" Grid.Row="2" Grid.Column="1" Width="120" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="2" Grid.Column="2" Text="Choose converted currency: " Margin="0 30 0 0" VerticalAlignment="Top" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
-                <ComboBox x:Name="Currency_ConvertFrom" Grid.Row="2" Grid.Column="2" Width="120" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <ComboBox x:Name="Converter_cbCurrency_ConvertFrom" Grid.Row="2" Grid.Column="2" Width="120" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="2" Grid.Column="3" Text="Choose currency to convert: " Margin="0 30 0 0" VerticalAlignment="Top" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
-                <ComboBox x:Name="Currency_ConvertTo" Grid.Row="2" Grid.Column="3" Width="120" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBox x:Name="ConvertedCurrency" BorderThickness="0" Background="Transparent" Grid.ColumnSpan="3" Grid.Row="3" Grid.Column="1" Width="100" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Text="Converted currency: " Margin="0 10 0 0" VerticalAlignment="Top" HorizontalAlignment="Center" Foreground="White" FontSize="25"/>
+                <ComboBox x:Name="Converter_cbCurrency_ConvertTo" Grid.Row="2" Grid.Column="3" Width="120" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock x:Name="Converter_txtConvertedValue" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Text="Converted currency: " Margin="0 10 0 0" VerticalAlignment="Top" HorizontalAlignment="Center" Foreground="White" FontSize="25"/>
 
-                <Button x:Name="Btn_Convert" Grid.Row="4" Grid.Column="1" Content="Convert"  Width="100" Height="40" Foreground="White" FontSize="20" BorderThickness="0" Background="#1F8FAF"/>
-                <Button x:Name="Btn_Clear" Grid.Row="4" Grid.Column="3" Content="Clear" BorderThickness="0"  Width="100" Height="40" Foreground="White" FontSize="20" Background="#1F8FAF" />
+                <Button x:Name="Converter_BtnConvert" Grid.Row="4" Grid.Column="1" Content="Convert"  Width="100" Height="40" Foreground="White" FontSize="20" BorderThickness="0" Background="#1F8FAF"/>
+                <Button x:Name="Converter_BtnClear" Grid.Row="4" Grid.Column="3" Content="Clear" BorderThickness="0"  Width="100" Height="40" Foreground="White" FontSize="20" Background="#1F8FAF" />
 
 
-                <TextBlock Margin="2" HorizontalAlignment="Right" VerticalAlignment ="Bottom" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="5" Text="widawski.dawid@yahoo.com"/>
+                <TextBlock Margin="2" HorizontalAlignment="Right" VerticalAlignment ="Bottom" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="5" Text="widawski.dawid@outlook.com"/>
             </Grid>
         </TabItem>
         <TabItem x:Name="tbCharts" Header="Charts">
@@ -103,9 +102,9 @@
                 </lvc:CartesianChart>
 
                 <TextBlock Grid.Row="4" Grid.Column="1" Text="Currency for chart" VerticalAlignment="top" HorizontalAlignment="Center" Foreground="#1C1F4A"/>
-                <ComboBox x:Name="Chart_CurrencyChosed" Grid.Row="4" Grid.Column="1" Width="150" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <ComboBox x:Name="Chart_cbCurrencyChosed" Grid.Row="4" Grid.Column="1" Width="150" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-                <TextBlock x:Name="Chart_Text_Currency" Margin="2" HorizontalAlignment="Right" VerticalAlignment ="Bottom" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="5" Text="widawski.dawid@yahoo.com"/>
+                <TextBlock Margin="2" HorizontalAlignment="Right" VerticalAlignment ="Bottom" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="5" Text="widawski.dawid@outlook.com"/>
             </Grid>
         </TabItem>
         <TabItem x:Name="tbSettings" Header="Settings">
@@ -120,6 +119,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="10"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="2*"/>
                     <RowDefinition Height="2*"/>
                     <RowDefinition Height="2*"/>
                     <RowDefinition Height="*"/>
@@ -142,12 +142,12 @@
                         </Rectangle.Fill>
                     </Rectangle>
                 </Border>
-                <TextBlock x:Name="Settings_Language_Text" Grid.Row="2" Grid.Column="2" Text="Language" VerticalAlignment="center" HorizontalAlignment="left" Foreground="White" FontSize="20"/>
-                <ComboBox x:Name="Settings_Language_ComboBox" Grid.Row="2" Grid.Column="2" Width="110" Height="40" VerticalAlignment="Center" HorizontalAlignment="left" Margin="110 0 0 0"/>
-                <TextBlock x:Name="Settings_Theme_Text" Grid.Row="3" Grid.Column="2" Text="Theme" VerticalAlignment="center" HorizontalAlignment="left" Foreground="White"  FontSize="20"/>
-                <ComboBox x:Name="Settings_Color_ComboBox" Grid.Row="3" Grid.Column="2" Width="110" Height="40" VerticalAlignment="Center" HorizontalAlignment="left" Margin="110 0 0 0"/>                
-                
-                <TextBlock Margin="2" HorizontalAlignment="Right" VerticalAlignment ="Bottom" Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="5" Text="widawski.dawid@yahoo.com"/>
+                <TextBlock x:Name="Settings_txtLanguage" Grid.Row="2" Grid.Column="2" Text="Language" VerticalAlignment="center" HorizontalAlignment="left" Foreground="White" FontSize="20"/>
+                <ComboBox x:Name="Settings_cbLanguage" Grid.Row="2" Grid.Column="2" Width="110" Height="40" VerticalAlignment="Center" HorizontalAlignment="left" Margin="110 0 0 0"/>
+                <TextBlock x:Name="Settings_txtTheme" Grid.Row="3" Grid.Column="2" Text="Theme" VerticalAlignment="center" HorizontalAlignment="left" Foreground="White"  FontSize="20"/>
+                <ComboBox x:Name="Settings_cbColor" Grid.Row="3" Grid.Column="2" Width="110" Height="40" VerticalAlignment="Center" HorizontalAlignment="left" Margin="110 0 0 0"/>
+
+                <TextBlock Margin="2" HorizontalAlignment="Right" VerticalAlignment ="Bottom" Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="5" Text="widawski.dawid@outlook.com"/>
             </Grid>
         </TabItem>
     </TabControl>
