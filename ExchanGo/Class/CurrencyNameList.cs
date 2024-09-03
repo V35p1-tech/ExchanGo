@@ -50,6 +50,7 @@ namespace ExchanGo
             currencyTable.Rows.Add("SGD", "Singapore Dollar");
             currencyTable.Rows.Add("THB", "Thai Baht");
             currencyTable.Rows.Add("ZAR", "South African Rand");
+            currencyTable.Rows.Add("EUR", "Euro");
 
         }
 

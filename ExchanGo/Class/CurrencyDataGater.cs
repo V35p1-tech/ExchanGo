@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
 using System.Xml.Linq;
@@ -15,6 +16,9 @@ namespace ExchanGo
 {
     public class CurrencyDataGater
     {
+        public delegate void DatabaseUpdatedEventHandler(object sender, EventArgs e);
+        public static event DatabaseUpdatedEventHandler DatabaseUpdated;
+
         public async Task<XDocument> GetDataFromHttp(string url)
         {
             using (HttpClient httpClient = new HttpClient())
@@ -95,21 +99,7 @@ namespace ExchanGo
                         command.Parameters.AddWithValue("@Rate", tempRate);
                         command.ExecuteScalar();
 
-                        /*
-                        string insertQuery = "INSERT INTO CurrencyExchange (CurrencyCode, Rate) VALUES (@CurrencyCode, @Rate)";
-
-                        using (SqlCommand command = new SqlCommand(insertQuery, connection))
-                        {
-                            // Add parameters to the SQL command
-                            command.Parameters.AddWithValue("@CurrencyCode", rate.Currency);
-                            command.Parameters.AddWithValue("@Rate", Convert.ToDecimal(rate.Rate));
-
-                            // Execute the SQL command
-                            command.ExecuteNonQuery();
-                        */
-
                         GlobalSettings.LastCurrencyActualisationDate = DateTime.Now.ToString();
-
                     }
                 }
             }
@@ -124,43 +114,221 @@ namespace ExchanGo
 
         }
 
-        public void CreateDataBaseEntires(XDocument DocumentToSave, string dbConnectionString)
+        public void UpdateHistoricDataBase (XDocument DocumentToSave, string dbConnectionString)
+        {
+            SqlConnection connection = new SqlConnection(dbConnectionString);
+            var currencyRates = DocumentToSave.Descendants()
+                                   .Where(x => x.Name.LocalName == "Cube" && x.Attribute("currency") != null && x.Attribute("rate") != null)
+                                   .Select(x => new
+                                   {
+                                       Currency = x.Attribute("currency").Value,
+                                       Rate = x.Attribute("rate").Value,
+                                       Date = x.Parent.Attribute("time").Value
+                                   })
+                                   .ToList();
+
+            try
+            {
+                connection.Open();
+
+                foreach (var Currency in currencyRates)
                 {
-                    SqlConnection connection = new SqlConnection(dbConnectionString);
+                    string insertQuery = "UPDATE CurrencyHistoric SET Rate = @Rate, Date = @Date WHERE CurrencyCode = @CurrencyCode";
 
-                    var currencyRates = DocumentToSave.Descendants()
-                                        .Where(x => x.Name.LocalName == "Cube" && x.Attribute("currency") != null && x.Attribute("rate") != null)
-                                        .Select(x => new
-                                        {
-                                            Currency = x.Attribute("currency").Value,
-                                            Rate = x.Attribute("rate").Value
-                                        });
-                    try
+                    using (SqlCommand command = new SqlCommand(insertQuery, connection))
                     {
-                        connection.Open();
-
-                        foreach (var rate in currencyRates)
+                        double tempRate = 0;
+                        DateTime tempDate = DateTime.Now;
+                        try
                         {
-                            string insertQuery = "INSERT INTO CurrencyExchange (CurrencyCode, Rate) VALUES (@CurrencyCode, @Rate)";
-
-                            using (SqlCommand command = new SqlCommand(insertQuery, connection))
-                            {
-                                command.Parameters.AddWithValue("@CurrencyCode", rate.Currency);
-                                command.Parameters.AddWithValue("@Rate", 0.0);
-                                command.ExecuteScalar();
-                            }
+                            bool success = double.TryParse(Currency.Rate, NumberStyles.Any, CultureInfo.CreateSpecificCulture("us-US"), out tempRate);
+                        }
+                        catch (FormatException)
+                        {
+                            MessageBox.Show("Rate - The string is not a valid double.");
+                        }
+                        try
+                        {
+                            bool success = DateTime.TryParse(Currency.Date, out tempDate); 
+                        }
+                        catch (FormatException)
+                        {
+                            MessageBox.Show("DT - The string is not a valid double.");
                         }
 
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message, "Save to db error");
-                    }
-                    finally
-                    {
-                        connection.Close();
+
+                        command.Parameters.AddWithValue("@CurrencyCode", Currency.Currency);
+                        command.Parameters.AddWithValue("@Rate", tempRate);
+                        command.Parameters.AddWithValue("@Date", tempDate);
+                        command.ExecuteScalar();
+
                     }
                 }
-
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Save to db error");
+            }
+            finally
+            {
+                connection.Close();
             }
         }
+
+        public void CreateDataBaseEntires(XDocument DocumentToSave, string dbConnectionString)
+            {
+                SqlConnection connection = new SqlConnection(dbConnectionString);
+
+            try
+            { 
+                connection.Open();
+                string clearDbQuery = "DELETE FROM CurrencyExchange";
+                SqlCommand deleteCommand = new SqlCommand(clearDbQuery, connection);
+                deleteCommand.ExecuteScalar();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Save to db error");
+            }
+            finally {  connection.Close(); };
+
+            var currencyRates = DocumentToSave.Descendants()
+                .Where(x => x.Name.LocalName == "Cube" && x.Attribute("currency") != null && x.Attribute("rate") != null)
+                .Select(x => new
+                {
+                    Currency = x.Attribute("currency").Value,
+                    Rate = x.Attribute("rate").Value
+                });
+            try
+            {
+                connection.Open();
+                foreach (var Currency in currencyRates)
+                {
+                    string insertQuery = "INSERT INTO CurrencyExchange (CurrencyCode, Rate) VALUES (@CurrencyCode, @Rate)";
+
+                    using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                    {
+                        double tempRate = 0;
+                        try
+                        {
+                            bool success = double.TryParse(Currency.Rate, NumberStyles.Any, CultureInfo.CreateSpecificCulture("us-US"), out tempRate);
+                        }
+                        catch (FormatException)
+                        {
+                            MessageBox.Show("The string is not a valid double.");
+                        }
+
+                        command.Parameters.AddWithValue("@CurrencyCode", Currency.Currency);
+                        command.Parameters.AddWithValue("@Rate", tempRate);
+                        command.ExecuteScalar();
+                    }
+                }
+                string insertEuroQuery = "INSERT INTO CurrencyExchange (CurrencyCode, Rate) VALUES ('EUR', 1)";
+                using (SqlCommand euroInsertCommand = new SqlCommand(insertEuroQuery, connection))
+                {
+                    euroInsertCommand.ExecuteScalar();
+                    GlobalSettings.DataBaseActual = true;
+                }
+                GlobalSettings.LastCurrencyActualisationDate = DateTime.Now.ToString();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Save to db error");
+            }
+            finally
+            {
+                string insertQuery = "INSERT INTO CurrencyExchange (CurrencyCode, Rate) VALUES ('EUR', 1)";
+
+                using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                {
+                    //command.Parameters.AddWithValue("@CurrencyCode", Currency.Currency);
+                    //command.Parameters.AddWithValue("@Rate", tempRate);
+                    command.ExecuteScalar();
+                    connection.Close();
+                    if (GlobalSettings.DataBaseActual) { OnDatabaseUpdated(EventArgs.Empty); }
+                }
+            }
+
+        }
+
+        private static void OnDatabaseUpdated(EventArgs e)
+        {
+            DatabaseUpdated?.Invoke(null, e);
+        }
+
+        public void CreateHistoricDataBaseEntries(XDocument DocumentToSave, string dbConnectionString)
+        {
+            SqlConnection connection = new SqlConnection(dbConnectionString);
+
+            try
+            {
+                connection.Open();
+                string clearDbQuery = "DELETE FROM CurrencyHistoric";
+                SqlCommand deleteCommand = new SqlCommand(clearDbQuery, connection);
+                deleteCommand.ExecuteScalar();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Save to db error");
+            }
+            finally { connection.Close(); };
+
+            var currencyRates = DocumentToSave.Descendants()
+                .Where(x => x.Name.LocalName == "Cube" && x.Attribute("currency") != null && x.Attribute("rate") != null)
+                .Select(x => new
+                {
+                    Currency = x.Attribute("currency").Value,
+                    Rate = x.Attribute("rate").Value,
+                    Date = x.Parent.Attribute("time").Value
+                })
+                .ToList();
+
+            try
+            {
+                connection.Open();
+
+                foreach (var Currency in currencyRates)
+                {
+                    string insertQuery = "INSERT INTO CurrencyHistoric (CurrencyCode, Rate, Date) VALUES (@CurrencyCode, @Rate, @Date)";
+
+                    using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                    {
+                        double tempRate = 0;
+                        DateTime tempDate = DateTime.Now;
+                        try
+                        {
+                            bool success = double.TryParse(Currency.Rate, NumberStyles.Any, CultureInfo.CreateSpecificCulture("us-US"), out tempRate);
+                        }
+                        catch (FormatException)
+                        {
+                            MessageBox.Show("Rate - The string is not a valid double.");
+                        }
+                        try
+                        {
+                            bool success = DateTime.TryParse(Currency.Date, out tempDate);
+                        }
+                        catch (FormatException)
+                        {
+                            MessageBox.Show("DT - The string is not a valid double.");
+                        }
+
+
+                        command.Parameters.AddWithValue("@CurrencyCode", Currency.Currency);
+                        command.Parameters.AddWithValue("@Rate", tempRate);
+                        command.Parameters.AddWithValue("@Date", tempDate);
+                        command.ExecuteScalar();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Save to db error");
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+    }
+}
+        

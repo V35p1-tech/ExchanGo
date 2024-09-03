@@ -13,7 +13,8 @@ namespace ExchanGo
         private static string _connectionString = ConfigurationManager.ConnectionStrings["ExchanGo.Properties.Settings.ExchanGo_dbConnectionString"].ConnectionString;
         private static string _httpCurrencyExchangeDaily = "http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml";
         private static string _httpCurrencyExchangeHistoric = "http://www.ecb.int/stats/eurofxref/eurofxref-hist-90d.xml";
-        private static string _lastCurrencyActualisationDate; 
+        private static string _lastCurrencyActualisationDate;
+        private static bool _dbActual; 
         private static XDocument _dailyCurrency;
         private static XDocument _historicalCurrency;
 
@@ -37,6 +38,11 @@ namespace ExchanGo
         { 
             get { return _lastCurrencyActualisationDate; }
             set { _lastCurrencyActualisationDate = value; }
+        }
+        public static bool DataBaseActual
+        {
+            get { return _dbActual; }
+            set { _dbActual = value; }
         }
     }
 }
