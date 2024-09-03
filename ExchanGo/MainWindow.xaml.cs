@@ -44,6 +44,7 @@ namespace ExchanGo
         private void OnDatabaseUpdated(object sender, EventArgs e)
         {
             ShowCurrencies();
+            Settings_txtDbActualisationDate.Text = "DataBase actualised on: " + GlobalSettings.LastCurrencyActualisationDate.ToString();
         }
 
         public async void GetAsyncData()
@@ -228,13 +229,48 @@ namespace ExchanGo
                     adapter.Fill(table);
                 }
                 var chartValues = new ChartValues<double>();
+                List<string> dateLabels = new List<string>();
                 foreach (DataRow row in table.Rows)
                 {
-                    double rate = Math.Round(Convert.ToDouble(row["Rate"]),2);
+                    double rate = Math.Round(Convert.ToDouble(row["Rate"]),4);
                     chartValues.Add(rate);
+
+                    DateTime tempDateTime = (DateTime)row["Date"];
+                    dateLabels.Add(tempDateTime.ToString("dd MMM"));
                 }
+                /*
+                List<DateTime> dates = new List<DateTime>();         
+                foreach (DataRow row in table.Rows)
+                {
+                    DateTime tempDateTime = (DateTime)row["Date"];
+                    dates.Add(tempDateTime);
+                }
+                */
+                DataContext = new
+                {
+                    XAxisDateFormatter = new Func<double, string>(value => new DateTime((long)value).ToString("dd MMM"))
+                };
                 Chart_LineSeries.Values = chartValues;
                 Chart_LineSeries.Title = "For 1Euro: ";
+                /*
+                Console.WriteLine($"Min Date: {dates.First()}, Min Ticks: {dates.First().Ticks}");
+                Console.WriteLine($"Max Date: {dates.Last()}, Max Ticks: {dates.Last().Ticks}");
+                
+                if (Chart.AxisX.Count > 0)
+                {
+                    Chart.AxisX[0].MinValue = new DateTime(dates.First().Ticks).ToOADate();
+                    Chart.AxisX[0].MaxValue = new DateTime(dates.Last().Ticks).ToOADate();
+
+                }
+                else
+                {
+                    Console.WriteLine("No AxisX configured on the chart.");
+                }
+                */
+                Chart.AxisX[0].Labels = dateLabels;
+                Chart.AxisX[0].LabelsRotation = 45;
+                Chart.AxisX[0].MinValue = 0;
+                Chart.AxisX[0].MaxValue = dateLabels.Count - 1;
             }
             catch (Exception ex)
             {
