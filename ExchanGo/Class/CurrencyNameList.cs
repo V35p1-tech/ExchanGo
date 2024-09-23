@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 
 namespace ExchanGo
 {
     public class CurrencyNameList
     {
         private static DataTable currencyTable = new DataTable("CurrencyTable");
-        public DataTable CurrencyNameTable {  get { return currencyTable; } }
+        public DataTable CurrencyNameTable
+        { get { return currencyTable; } }
+
         public CurrencyNameList()
         {
-
             // Define the columns
             currencyTable.Columns.Add("CurrencyCode", typeof(string));
             currencyTable.Columns.Add("FullName", typeof(string));
@@ -51,7 +46,6 @@ namespace ExchanGo
             currencyTable.Rows.Add("THB", "Thai Baht");
             currencyTable.Rows.Add("ZAR", "South African Rand");
             currencyTable.Rows.Add("EUR", "Euro");
-
         }
 
         public string ReadFullName(string CurrencyCode)

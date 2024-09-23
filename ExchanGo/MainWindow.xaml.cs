@@ -1,44 +1,32 @@
-﻿using System;
+﻿using LiveCharts;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data;
+using System.Data.SqlClient;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Configuration;
-using LiveCharts;
-using LiveCharts.Wpf;
-using System.Xml.Linq;
-using System.Globalization;
-using System.Data.SqlClient;
-using System.Data;
-using System.CodeDom;
 
 namespace ExchanGo
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    ///
+    //TODO Create language & themes handling
     public partial class MainWindow : Window
     {
-        CurrencyNameList currencyFullNameList = new CurrencyNameList();
+        private CurrencyNameList currencyFullNameList = new CurrencyNameList();
+
         public MainWindow()
         {
             GlobalSettings.DataBaseActual = false;
             InitializeComponent();
             GetAsyncData();
             CurrencyDataGater.DatabaseUpdated += OnDatabaseUpdated;
-          
-            Chart_LineSeries.Values = new ChartValues<double> { 3, 5, 7, 4 ,1 ,0 ,2 ,5 ,6 ,3 ,2 ,1 ,2 ,5 ,5 ,9 ,6};
-            //DataContext = this;
 
+            Chart_LineSeries.Values = new ChartValues<double> { 3, 5, 7, 4, 1, 0, 2, 5, 6, 3, 2, 1, 2, 5, 5, 9, 6 };
+            //DataContext = this;
         }
 
         private void OnDatabaseUpdated(object sender, EventArgs e)
@@ -54,7 +42,6 @@ namespace ExchanGo
             try
             {
                 GlobalSettings.DailyCurrencyDoc = await GetActualCurrency.GetDataFromHttp(GlobalSettings.HttpCurrencyExchangeDaily);
-
             }
             catch (Exception ex)
             {
@@ -72,7 +59,6 @@ namespace ExchanGo
             GetActualCurrency.CreateDataBaseEntires(GlobalSettings.DailyCurrencyDoc, GlobalSettings.ConnectionString);
             GetActualCurrency.CreateHistoricDataBaseEntries(GlobalSettings.HistoricalCurrencyDoc, GlobalSettings.ConnectionString);
             // GetActualCurrency.SaveToFile(GlobalSettings.DailyCurrencyDoc, "DailyCur.xml");
-
         }
 
         public async void UpdateAsyncData()
@@ -90,16 +76,15 @@ namespace ExchanGo
 
             try
             {
-                GlobalSettings.HistoricalCurrencyDoc = await GetActualCurrency.GetDataFromHttp(GlobalSettings.HttpsCurrencyExchangeHistoric); 
+                GlobalSettings.HistoricalCurrencyDoc = await GetActualCurrency.GetDataFromHttp(GlobalSettings.HttpsCurrencyExchangeHistoric);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
-            GetActualCurrency.UpdateDataBase(GlobalSettings.DailyCurrencyDoc,GlobalSettings.ConnectionString);
+            GetActualCurrency.UpdateDataBase(GlobalSettings.DailyCurrencyDoc, GlobalSettings.ConnectionString);
             GetActualCurrency.UpdateHistoricDataBase(GlobalSettings.HistoricalCurrencyDoc, GlobalSettings.ConnectionString);
             // GetActualCurrency.SaveToFile(GlobalSettings.DailyCurrencyDoc, "DailyCur.xml");
-
         }
 
         public void ShowCurrencies()
@@ -118,21 +103,18 @@ namespace ExchanGo
                 Converter_cbCurrency_ConvertTo.DisplayMemberPath = "CurrencyCode";
                 Converter_cbCurrency_ConvertTo.SelectedValuePath = "Rate";
                 DataTable chartTable = currencyTable;
-                chartTable.Rows.RemoveAt(chartTable.Rows.Count-1);
+                chartTable.Rows.RemoveAt(chartTable.Rows.Count - 1);
                 Chart_cbCurrencyChosed.ItemsSource = chartTable.DefaultView;
                 Chart_cbCurrencyChosed.DisplayMemberPath = "CurrencyCode";
                 Chart_cbCurrencyChosed.SelectedValuePath = "Rate";
-                
             }
         }
-        
-        
+
         private void Converter_BtnConvert_Click(object sender, RoutedEventArgs e)
         {
             double ConvertedCurrency = 0;
             if (double.TryParse(Converter_txtInputCurrency.Text, NumberStyles.Any, CultureInfo.CreateSpecificCulture("us-US"), out double tempText))
             {
-                
                 string ConvertFrom = Converter_cbCurrency_ConvertFrom.SelectedValue.ToString();
                 string ConvertTo = Converter_cbCurrency_ConvertTo.SelectedValue.ToString();
                 double ConvertFrom_Rate = 1;
@@ -142,8 +124,8 @@ namespace ExchanGo
                     ConvertFrom_Rate = (double)Converter_cbCurrency_ConvertFrom.SelectedValue;
                     ConvertTo_Rate = (double)Converter_cbCurrency_ConvertTo.SelectedValue;
                 }
-                catch (Exception ex) 
-                { 
+                catch (Exception ex)
+                {
                     Console.WriteLine(ex.Message);
                     Converter_txtConvertedValue.Text = "Conversion fault. Wrong data provided.";
                 }
@@ -153,7 +135,6 @@ namespace ExchanGo
                 Converter_txtConvertedValue.Text = "Converted currency: " + sConvertedCurrency;
             }
             else { Converter_txtConvertedValue.Text = "Conversion fault. Wrong data provided."; }
-            
         }
 
         private void Converter_BtnClear_Click(object sender, RoutedEventArgs e)
@@ -209,6 +190,7 @@ namespace ExchanGo
                 Console.WriteLine("Currency not found.");
             }
         }
+
         private void Chart_cbCurrencyChosed_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string selectedCurrency = "";
@@ -232,14 +214,14 @@ namespace ExchanGo
                 List<string> dateLabels = new List<string>();
                 foreach (DataRow row in table.Rows)
                 {
-                    double rate = Math.Round(Convert.ToDouble(row["Rate"]),4);
+                    double rate = Math.Round(Convert.ToDouble(row["Rate"]), 4);
                     chartValues.Add(rate);
 
                     DateTime tempDateTime = (DateTime)row["Date"];
                     dateLabels.Add(tempDateTime.ToString("dd MMM"));
                 }
                 /*
-                List<DateTime> dates = new List<DateTime>();         
+                List<DateTime> dates = new List<DateTime>();
                 foreach (DataRow row in table.Rows)
                 {
                     DateTime tempDateTime = (DateTime)row["Date"];
@@ -255,12 +237,11 @@ namespace ExchanGo
                 /*
                 Console.WriteLine($"Min Date: {dates.First()}, Min Ticks: {dates.First().Ticks}");
                 Console.WriteLine($"Max Date: {dates.Last()}, Max Ticks: {dates.Last().Ticks}");
-                
+
                 if (Chart.AxisX.Count > 0)
                 {
                     Chart.AxisX[0].MinValue = new DateTime(dates.First().Ticks).ToOADate();
                     Chart.AxisX[0].MaxValue = new DateTime(dates.Last().Ticks).ToOADate();
-
                 }
                 else
                 {

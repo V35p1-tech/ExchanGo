@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace ExchanGo
@@ -17,6 +12,7 @@ namespace ExchanGo
     public class CurrencyDataGater
     {
         public delegate void DatabaseUpdatedEventHandler(object sender, EventArgs e);
+
         public static event DatabaseUpdatedEventHandler DatabaseUpdated;
 
         public async Task<XDocument> GetDataFromHttp(string url)
@@ -29,17 +25,15 @@ namespace ExchanGo
                     string xmlContent = await httpClient.GetStringAsync(url);
                     xmlDoc = XDocument.Parse(xmlContent);
                     return xmlDoc;
-                    
-
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                     return null;
                 }
-
             }
         }
+
         public void SaveToFile(XDocument DocumentToSave, string filePath)
         {
             DocumentToSave.Save(filePath);
@@ -111,10 +105,9 @@ namespace ExchanGo
             {
                 connection.Close();
             }
-
         }
 
-        public void UpdateHistoricDataBase (XDocument DocumentToSave, string dbConnectionString)
+        public void UpdateHistoricDataBase(XDocument DocumentToSave, string dbConnectionString)
         {
             SqlConnection connection = new SqlConnection(dbConnectionString);
             var currencyRates = DocumentToSave.Descendants()
@@ -149,19 +142,17 @@ namespace ExchanGo
                         }
                         try
                         {
-                            bool success = DateTime.TryParse(Currency.Date, out tempDate); 
+                            bool success = DateTime.TryParse(Currency.Date, out tempDate);
                         }
                         catch (FormatException)
                         {
                             MessageBox.Show("DT - The string is not a valid double.");
                         }
 
-
                         command.Parameters.AddWithValue("@CurrencyCode", Currency.Currency);
                         command.Parameters.AddWithValue("@Rate", tempRate);
                         command.Parameters.AddWithValue("@Date", tempDate);
                         command.ExecuteScalar();
-
                     }
                 }
             }
@@ -176,11 +167,11 @@ namespace ExchanGo
         }
 
         public void CreateDataBaseEntires(XDocument DocumentToSave, string dbConnectionString)
-            {
-                SqlConnection connection = new SqlConnection(dbConnectionString);
+        {
+            SqlConnection connection = new SqlConnection(dbConnectionString);
 
             try
-            { 
+            {
                 connection.Open();
                 string clearDbQuery = "DELETE FROM CurrencyExchange";
                 SqlCommand deleteCommand = new SqlCommand(clearDbQuery, connection);
@@ -190,7 +181,7 @@ namespace ExchanGo
             {
                 MessageBox.Show(ex.Message, "Save to db error");
             }
-            finally {  connection.Close(); };
+            finally { connection.Close(); };
 
             var currencyRates = DocumentToSave.Descendants()
                 .Where(x => x.Name.LocalName == "Cube" && x.Attribute("currency") != null && x.Attribute("rate") != null)
@@ -248,7 +239,6 @@ namespace ExchanGo
                     if (GlobalSettings.DataBaseActual) { OnDatabaseUpdated(EventArgs.Empty); }
                 }
             }
-
         }
 
         private static void OnDatabaseUpdated(EventArgs e)
@@ -312,7 +302,6 @@ namespace ExchanGo
                             MessageBox.Show("DT - The string is not a valid double.");
                         }
 
-
                         command.Parameters.AddWithValue("@CurrencyCode", Currency.Currency);
                         command.Parameters.AddWithValue("@Rate", tempRate);
                         command.Parameters.AddWithValue("@Date", tempDate);
@@ -331,4 +320,3 @@ namespace ExchanGo
         }
     }
 }
-        
